@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Voting Hisbu-Jamissbon 2026 - 2027</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at 12% 10%, #8be04e 0%, #399e1e 42%, #1d6b12 100%);
+            background-attachment: fixed;
+        }
+        .loader { border-top-color: transparent; }
+        /* Kustomisasi scrollbar untuk modal profil */
+        .modal-scroll::-webkit-scrollbar { width: 6px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #86c973; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 selection:bg-lime-300 selection:text-green-950">
+
+    <!-- 1. HALAMAN LOGIN -->
+    <div id="login-section" class="min-h-screen flex flex-col md:flex-row items-center justify-center p-6 md:p-12 max-w-6xl mx-auto gap-12">
+        <div class="w-full md:w-1/2 text-white flex flex-col items-center md:items-start text-center md:text-left">
+            <div class="bg-white p-2 rounded-full shadow-xl mb-6 w-20 h-20 md:w-24 md:h-24 ring-4 ring-lime-200/50">
+                <img src="LOGO jamisbon.jpg" alt="Logo JAMISSBON" class="w-full h-full rounded-full object-cover">
+            </div>
+            <span class="bg-[#1b5e10]/70 border border-lime-300/40 text-lime-100 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 tracking-wider uppercase">
+                Pemilu Periode 2026 - 2027
+            </span>
+            <h1 class="text-5xl font-extrabold mb-3 tracking-wide drop-shadow-sm">Hello!</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-lime-100 mb-4">Pemilihan Calon Ketua Hisbu-Jamissbon</h2>
+            <p class="text-green-50/90 text-sm md:text-base leading-relaxed max-w-md">
+                Gunakan 2 hak suara Anda (Calon Ketua Putra &amp; Calon Ketua Putri) untuk menentukan pemimpin terbaik Hisbu-Jamissbon Periode 2026 - 2027.
+            </p>
+        </div>
+
+        <div class="w-full md:w-1/2 max-w-md">
+            <div class="bg-white rounded-[2rem] shadow-2xl p-10 border-t-8 border-[#257415]">
+                <h3 class="text-2xl font-bold text-center mb-2 text-[#1a540e]">Selamat Datang</h3>
+                <p class="text-center text-sm text-gray-500 mb-8">Silakan masukkan Username &amp; Password Anggota JAMISSBON Anda.</p>
+                <div class="space-y-5">
+                    <div>
+                        <input type="text" id="usernameInput" autocomplete="off"
+                            onkeypress="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('passwordInput').focus(); }"
+                            placeholder="Username"
+                            class="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-[#2e8b19] focus:ring-2 focus:ring-lime-300/60 transition">
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="passwordInput" autocomplete="new-password" style="-webkit-text-security: disc;"
+                            onkeypress="if(event.key === 'Enter') prosesLogin()"
+                            placeholder="Password"
+                            class="w-full px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-[#2e8b19] focus:ring-2 focus:ring-lime-300/60 transition pr-12">
+                        <button type="button" onclick="toggleSandi()" class="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-[#257415] transition cursor-pointer">
+                            <!-- Ikon Mata Tercoret -->
+                            <svg id="ikon-mata-tutup" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 block">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                            </svg>
+                            <!-- Ikon Mata Terbuka -->
+                            <svg id="ikon-mata-buka" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 hidden">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <button onclick="prosesLogin()"
+                        class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-semibold py-3.5 px-6 rounded-full transition-all shadow-lg mt-2">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. HALAMAN VOTING PUTRA (TAHAP 1 DARI 2) -->
+    <div id="voting-putra-section" class="hidden min-h-screen pb-20">
+        <div class="pt-12 pb-8 flex flex-col items-center text-center px-4 text-white">
+            <div class="bg-white p-2 rounded-full shadow-lg mb-4 w-16 h-16 ring-4 ring-lime-200/40">
+                <img src="LOGO jamisbon.jpg" alt="Logo JAMISSBON" class="w-full h-full rounded-full object-cover">
+            </div>
+            <span class="bg-[#1b5e10]/80 border border-lime-300/40 text-lime-100 text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wider">
+                TAHAP 1 DARI 2 &bull; PUTRA
+            </span>
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-2 drop-shadow-sm">Potret Para Kandidat Putra</h1>
+            <p class="text-lime-100 text-sm">Calon Ketua Hisbu-Jamissbon Periode 2026 - 2027</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Kandidat Putra 01 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="alb.jpg" alt="Hafidz Hasandi Albasthomi" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 01
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            Hafidz Hasandi Albasthomi
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putra1')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('01. Hafidz Hasandi Albasthomi', 'Putra')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 01
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kandidat Putra 02 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="azka.jpg" alt="M. Azka Afkharul Ishka" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 02
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            M. Azka Afkharul Ishka
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putra2')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('02. M. Azka Afkharul Ishka', 'Putra')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 02
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kandidat Putra 03 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="kh.jpg" alt="Khaffiyan Rozaq Aghna" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 03
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            Khaffiyan Rozaq Aghna
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putra3')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('03. Khaffiyan Rozaq Aghna', 'Putra')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 03
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. HALAMAN VOTING PUTRI (TAHAP 2 DARI 2) -->
+    <div id="voting-putri-section" class="hidden min-h-screen pb-20">
+        <div class="pt-12 pb-8 flex flex-col items-center text-center px-4 text-white">
+            <div class="bg-white p-2 rounded-full shadow-lg mb-4 w-16 h-16 ring-4 ring-yellow-200/60">
+                <img src="LOGO jamisbon.jpg" alt="Logo JAMISSBON" class="w-full h-full rounded-full object-cover">
+            </div>
+            <span class="bg-yellow-400/90 text-[#1a4f0e] text-xs font-extrabold px-4 py-1 rounded-full mb-3 tracking-wider shadow-sm">
+                TAHAP 2 DARI 2 &bull; PUTRI
+            </span>
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-2 drop-shadow-sm">Potret Para Kandidat Putri</h1>
+            <p class="text-lime-100 text-sm">Calon Ketua Hisbu-Jamissbon Periode 2026 - 2027</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 mt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Kandidat Putri 01 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="nayela.jpg" alt="Nayla Fitri Amalia" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 01
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            Nayla Fitri Amalia
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putri1')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('01. Nayla Fitri Amalia', 'Putri')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 01
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kandidat Putri 02 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="no bg.jpg" alt="Azzaria Neysa Lathifa" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 02
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            Azzaria Neysa Lathifa
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putri2')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('02. Azzaria Neysa Lathifa', 'Putri')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 02
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Kandidat Putri 03 -->
+                <div class="bg-white rounded-[2rem] shadow-2xl p-8 flex flex-col h-full border-b-8 border-[#257415]">
+                    <div class="flex-grow flex flex-col items-center">
+                        <div class="w-32 h-32 mx-auto rounded-full border-4 border-[#6cc635] mb-5 overflow-hidden shadow-lg bg-green-50">
+                            <img src="al.jpg" alt="Aalya Himmah El-Milla" class="w-full h-full object-cover object-top">
+                        </div>
+                        <span class="bg-[#257415] text-white text-xs font-bold px-4 py-1 rounded-full mb-3 tracking-wide">
+                            Kandidat 03
+                        </span>
+                        <h2 class="text-xl font-bold text-center mb-6 text-gray-900 leading-snug">
+                            Aalya Himmah El-Milla
+                        </h2>
+                    </div>
+                    <div class="mt-2 flex flex-col gap-3">
+                        <button onclick="bukaProfil('putri3')" class="w-full bg-[#eef9e8] hover:bg-[#dcf3d1] text-[#1e6014] font-semibold py-2.5 rounded-full shadow-sm transition text-sm">
+                            📖 Lihat Profil &amp; Visi Misi
+                        </button>
+                        <button onclick="prosesVote('03. Aalya Himmah El-Milla', 'Putri')" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-full shadow-md transition">
+                            Vote Kandidat 03
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. HALAMAN PANITIA PENDAFTARAN -->
+    <div id="panitia-section" class="hidden min-h-screen flex items-center justify-center p-6 w-full relative" style="background-image: url('bg-panitia.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <div class="absolute inset-0 bg-[#123d0a]/75"></div>
+
+        <div class="flex flex-col md:flex-row gap-8 w-full max-w-5xl relative z-10">
+            <!-- KOTAK 1: Form Pendaftaran -->
+            <div class="bg-white rounded-[2rem] shadow-2xl p-10 w-full md:w-1/2 flex flex-col justify-center border-t-8 border-[#257415]">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-[#1a540e]">Panel Panitia</h2>
+                    <p class="text-gray-500 text-sm">Tambahkan pemilih baru ke database Hisbu-Jamissbon.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Kategori Pemilih</label>
+                        <select id="panitia-bilik" class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#2e8b19] bg-gray-50">
+                            <option value="Hadir Putra">Anggota Putra</option>
+                            <option value="Hadir Putri">Anggota Putri</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Username Baru</label>
+                        <input type="text" id="panitia-user"
+                            onkeypress="if(event.key === 'Enter') { event.preventDefault(); document.getElementById('panitia-pass').focus(); }"
+                            placeholder="Nama Santri"
+                            class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#2e8b19] bg-gray-50">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <input type="password" id="panitia-pass"
+                            onkeypress="if(event.key === 'Enter') daftarkanPemilih()"
+                            placeholder="Buat Password"
+                            class="w-full px-5 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-[#2e8b19] bg-gray-50">
+                    </div>
+                    <button onclick="daftarkanPemilih()" id="btn-daftar" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-4 rounded-xl shadow-md transition mt-4">
+                        Tambahkan Pemilih
+                    </button>
+                    <button onclick="window.location.reload()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold py-3 rounded-xl transition mt-2">
+                        Tutup Panel
+                    </button>
+                </div>
+            </div>
+
+            <!-- KOTAK 2: Daftar Santri Terdaftar -->
+            <div class="bg-white/95 backdrop-blur-md rounded-[2rem] shadow-2xl p-8 w-full md:w-1/2 flex flex-col border-t-8 border-[#6cc635]">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-[#1a540e]">Daftar Terkini</h2>
+                    <button onclick="refreshDaftarPanitia()" class="text-[#1e6014] hover:bg-[#dcf3d1] text-sm font-semibold px-3 py-1 bg-[#eef9e8] rounded-full transition">Refresh Data</button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto max-h-[400px] modal-scroll pr-2">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold text-[#257415] border-b-2 border-green-200 pb-1 mb-3">Anggota JAMISSBON Putra</h3>
+                            <ul id="list-hadir-putra" class="space-y-2 text-sm text-gray-700">
+                                <li class="italic text-gray-400">Memuat data...</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-emerald-700 border-b-2 border-emerald-200 pb-1 mb-3">Anggota JAMISSBON Putri</h3>
+                            <ul id="list-hadir-putri" class="space-y-2 text-sm text-gray-700">
+                                <li class="italic text-gray-400">Memuat data...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. HALAMAN ADMIN (LIVE RESULT) -->
+    <div id="admin-section" class="hidden min-h-screen flex flex-col items-center justify-start p-6 pt-12 w-full text-white">
+        <div class="flex items-center gap-4 mb-2">
+            <img src="LOGO jamisbon.jpg" alt="Logo JAMISSBON" class="w-14 h-14 rounded-full border-2 border-lime-200 object-cover bg-white p-0.5 shadow-lg">
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-wide drop-shadow-sm">LIVE HASIL PEMILU</h1>
+        </div>
+        <p class="text-lime-100 mb-10 text-base md:text-lg font-medium text-center">Rekapitulasi Suara Calon Ketua Hisbu-Jamissbon Periode 2026 - 2027</p>
+
+        <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- KARTU ADMIN PUTRA -->
+            <div class="bg-[#154f0c]/55 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-lime-300/30 shadow-2xl">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-8 text-center border-b border-lime-300/30 pb-4 tracking-wide">CALON KETUA PUTRA</h2>
+
+                <!-- Admin Putra 1 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="alb.jpg" class="w-16 h-16 rounded-full border-2 border-lime-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">01. Hafidz Hasandi Albasthomi</span>
+                            <span class="text-lg md:text-xl font-bold text-lime-200 whitespace-nowrap" id="suara-putra-1">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putra-1" class="bg-gradient-to-r from-[#8be04e] to-[#facc15] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Putra 2 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="azka.jpg" class="w-16 h-16 rounded-full border-2 border-lime-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">02. M. Azka Afkharul Ishka</span>
+                            <span class="text-lg md:text-xl font-bold text-lime-200 whitespace-nowrap" id="suara-putra-2">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putra-2" class="bg-gradient-to-r from-[#8be04e] to-[#facc15] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Putra 3 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="kh.jpg" class="w-16 h-16 rounded-full border-2 border-lime-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">03. Khaffiyan Rozaq Aghna</span>
+                            <span class="text-lg md:text-xl font-bold text-lime-200 whitespace-nowrap" id="suara-putra-3">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putra-3" class="bg-gradient-to-r from-[#8be04e] to-[#facc15] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KARTU ADMIN PUTRI -->
+            <div class="bg-[#154f0c]/55 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-lime-300/30 shadow-2xl">
+                <h2 class="text-2xl md:text-3xl font-extrabold mb-8 text-center border-b border-lime-300/30 pb-4 text-yellow-200 tracking-wide">CALON KETUA PUTRI</h2>
+
+                <!-- Admin Putri 1 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="nayela.jpg" class="w-16 h-16 rounded-full border-2 border-yellow-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">01. Nayla Fitri Amalia</span>
+                            <span class="text-lg md:text-xl font-bold text-yellow-200 whitespace-nowrap" id="suara-putri-1">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putri-1" class="bg-gradient-to-r from-[#fde047] to-[#8be04e] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Putri 2 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="no bg.jpg" class="w-16 h-16 rounded-full border-2 border-yellow-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">02. Azzaria Neysa Lathifa</span>
+                            <span class="text-lg md:text-xl font-bold text-yellow-200 whitespace-nowrap" id="suara-putri-2">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putri-2" class="bg-gradient-to-r from-[#fde047] to-[#8be04e] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Putri 3 -->
+                <div class="mb-6 flex items-center gap-4">
+                    <img src="al.jpg" class="w-16 h-16 rounded-full border-2 border-yellow-300 object-cover object-top shadow-md flex-shrink-0 bg-white">
+                    <div class="flex-1">
+                        <div class="flex justify-between mb-1 gap-2">
+                            <span class="text-base md:text-lg font-semibold">03. Aalya Himmah El-Milla</span>
+                            <span class="text-lg md:text-xl font-bold text-yellow-200 whitespace-nowrap" id="suara-putri-3">0 Suara</span>
+                        </div>
+                        <div class="w-full bg-black/35 rounded-full h-6 overflow-hidden">
+                            <div id="bar-putri-3" class="bg-gradient-to-r from-[#fde047] to-[#8be04e] h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <button onclick="refreshDataAdmin()" class="bg-[#1b5e10] hover:bg-[#13440b] border border-lime-300/40 text-white px-6 py-2.5 rounded-full font-bold shadow-md transition flex items-center">
+                <span id="text-refresh-admin">Refresh Data</span>
+            </button>
+            <button onclick="window.location.reload()" class="bg-white hover:bg-lime-50 text-[#1b5e10] px-6 py-2.5 rounded-full font-bold shadow-md transition">
+                Kembali ke Login
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL PROFIL KANDIDAT -->
+    <div id="modal-profil" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div class="bg-[#eef9e8] px-8 py-4 flex justify-between items-center border-b border-green-200">
+                <h3 class="text-xl font-bold text-[#1a540e]">Profil Kandidat</h3>
+                <button onclick="tutupProfil()" class="text-gray-500 hover:text-red-500 transition text-3xl leading-none">&times;</button>
+            </div>
+
+            <div class="p-8 overflow-y-auto modal-scroll flex-grow">
+                <div class="flex flex-col md:flex-row gap-6 items-center md:items-start mb-8 pb-8 border-b border-gray-100">
+                    <img id="profil-foto" src="" class="w-32 h-32 rounded-full border-4 border-[#6cc635] object-cover object-top shadow-md flex-shrink-0 bg-green-50">
+                    <div class="text-center md:text-left">
+                        <h2 id="profil-nama" class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Nama Kandidat</h2>
+                        <p id="profil-ttl" class="text-gray-600 font-medium mb-3">Tempat, Tanggal Lahir</p>
+                        <span id="profil-kategori" class="inline-block bg-[#eef9e8] text-[#1e6014] px-3 py-1 rounded-full text-sm font-semibold">Kategori</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-bold text-[#257415] mb-2 flex items-center gap-2">Visi</h4>
+                        <p id="profil-visi" class="text-gray-700 leading-relaxed"></p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-[#257415] mb-2 flex items-center gap-2">Misi</h4>
+                        <ul id="profil-misi" class="list-disc pl-5 text-gray-700 leading-relaxed space-y-1"></ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-bold text-[#257415] mb-2 flex items-center gap-2">Pengalaman Organisasi</h4>
+                        <ul id="profil-pengalaman" class="list-disc pl-5 text-gray-700 leading-relaxed space-y-1"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 px-8 py-4 border-t border-gray-200 text-right">
+                <button onclick="tutupProfil()" class="bg-[#257415] hover:bg-[#1b590f] text-white font-semibold py-2.5 px-8 rounded-full transition shadow-md">Tutup Profil</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI VOTING -->
+    <div id="modal-konfirmasi" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-[#257415]">
+            <div class="w-16 h-16 bg-[#eef9e8] text-[#257415] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🗳️</div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">Konfirmasi Pilihan</h3>
+            <p class="text-gray-600 mb-6 text-sm">
+                Yakin memilih <span id="nama-kandidat-terpilih" class="font-bold text-[#257415] text-base"></span>?
+                <br><br>Pilihan yang dikirim tidak dapat diubah.
+            </p>
+            <div class="flex gap-4">
+                <button id="btn-batal" onclick="batalVote()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 rounded-full transition">Batal</button>
+                <button id="btn-yakin" onclick="kirimVote()" class="flex-1 bg-[#257415] hover:bg-[#1b590f] text-white font-semibold py-3 rounded-full shadow-md transition flex justify-center items-center">
+                    <span id="text-yakin">Yakin</span>
+                    <div id="loading-spinner" class="hidden w-5 h-5 border-4 border-white border-solid rounded-full animate-spin loader ml-2"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIKA -->
+    <script>
+        // Ganti URL & SHEET_ID ini jika kamu membuat Spreadsheet & Apps Script baru untuk Hisbu-Jamissbon
+        const URL_DATABASE = "https://script.google.com/macros/s/AKfycby6BbbsLEFvYQAO6YdPdtl2jWS5dcWeEHHgtjBYOPVhRaxuPdA-mqpW26Fx0vYJXXMfYA/exec";
+        const SHEET_ID = "1gR_p5dgEY28Y54wvDHqawCybhXx2iUe82ZDc-mPbBkk";
+
+        // =========================================================
+        // DATA VISI MISI KANDIDAT (SESUAI POSTINGAN IG HISBU-JAMISSBON)
+        // =========================================================
+        const databaseProfil = {
+            "putra1": {
+                nama: "Hafidz Hasandi Albasthomi",
+                kategori: "Kandidat 01 - Calon Ketua Putra",
+                ttl: "Tuban, ...",
+                foto: "alb.jpg",
+                visi: "Tuliskan visi Hafidz Hasandi Albasthomi di sini.",
+                misi: [
+                    "Misi pertama Hafidz Hasandi Albasthomi.",
+                    "Misi kedua Hafidz Hasandi Albasthomi."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            },
+            "putra2": {
+                nama: "M. Azka Afkharul Ishka",
+                kategori: "Kandidat 02 - Calon Ketua Putra",
+                ttl: "Tuban, ...",
+                foto: "azka.jpg",
+                visi: "Tuliskan visi M. Azka Afkharul Ishka di sini.",
+                misi: [
+                    "Misi pertama M. Azka Afkharul Ishka.",
+                    "Misi kedua M. Azka Afkharul Ishka."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            },
+            "putra3": {
+                nama: "Khaffiyan Rozaq Aghna",
+                kategori: "Kandidat 03 - Calon Ketua Putra",
+                ttl: "Tuban, ...",
+                foto: "kh.jpg",
+                visi: "Tuliskan visi Khaffiyan Rozaq Aghna di sini.",
+                misi: [
+                    "Misi pertama Khaffiyan Rozaq Aghna.",
+                    "Misi kedua Khaffiyan Rozaq Aghna."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            },
+            "putri1": {
+                nama: "Nayla Fitri Amalia",
+                kategori: "Kandidat 01 - Calon Ketua Putri",
+                ttl: "Tuban, ...",
+                foto: "nayela.jpg",
+                visi: "Tuliskan visi Nayla Fitri Amalia di sini.",
+                misi: [
+                    "Misi pertama Nayla Fitri Amalia.",
+                    "Misi kedua Nayla Fitri Amalia."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            },
+            "putri2": {
+                nama: "Azzaria Neysa Lathifa",
+                kategori: "Kandidat 02 - Calon Ketua Putri",
+                ttl: "Tuban, ...",
+                foto: "no bg.jpg",
+                visi: "Tuliskan visi Azzaria Neysa Lathifa di sini.",
+                misi: [
+                    "Misi pertama Azzaria Neysa Lathifa.",
+                    "Misi kedua Azzaria Neysa Lathifa."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            },
+            "putri3": {
+                nama: "Aalya Himmah El-Milla",
+                kategori: "Kandidat 03 - Calon Ketua Putri",
+                ttl: "Tuban, ...",
+                foto: "al.jpg",
+                visi: "Tuliskan visi Aalya Himmah El-Milla di sini.",
+                misi: [
+                    "Misi pertama Aalya Himmah El-Milla.",
+                    "Misi kedua Aalya Himmah El-Milla."
+                ],
+                pengalaman: [
+                    "Pengalaman organisasi 1",
+                    "Pengalaman organisasi 2"
+                ]
+            }
+        };
+
+        let kandidatSementara = "";
+        let kategoriSementara = "";
+
+        // =========================================================
+        // MODAL PROFIL KANDIDAT
+        // =========================================================
+        function bukaProfil(id) {
+            const data = databaseProfil[id];
+            if (!data) return;
+
+            document.getElementById('profil-foto').src = data.foto;
+            document.getElementById('profil-ttl').innerText = data.ttl;
+            document.getElementById('profil-nama').innerText = data.nama;
+            document.getElementById('profil-kategori').innerText = data.kategori;
+            document.getElementById('profil-visi').innerText = data.visi;
+
+            const pillKategori = document.getElementById('profil-kategori');
+            if (data.kategori.includes("Putri")) {
+                pillKategori.className = "inline-block bg-yellow-100 text-[#1e6014] px-3 py-1 rounded-full text-sm font-semibold";
+            } else {
+                pillKategori.className = "inline-block bg-[#eef9e8] text-[#1e6014] px-3 py-1 rounded-full text-sm font-semibold";
+            }
+
+            document.getElementById('profil-misi').innerHTML = data.misi
+                .filter(item => item.trim() !== "")
+                .map(item => `<li>${item}</li>`).join("");
+
+            const pengalamanValid = data.pengalaman.filter(item => item.trim() !== "");
+            document.getElementById('profil-pengalaman').innerHTML = pengalamanValid.length > 0
+                ? pengalamanValid.map(item => `<li>${item}</li>`).join("")
+                : `<li class="italic text-gray-400">Belum ada data pengalaman</li>`;
+
+            document.getElementById('modal-profil').classList.remove('hidden');
+        }
+
+        function tutupProfil() {
+            document.getElementById('modal-profil').classList.add('hidden');
+        }
+
+        // =========================================================
+        // TOGGLE SANDI
+        // =========================================================
+        function toggleSandi() {
+            const inputSandi = document.getElementById('passwordInput');
+            const ikonTutup = document.getElementById('ikon-mata-tutup');
+            const ikonBuka = document.getElementById('ikon-mata-buka');
+
+            if (inputSandi.style.webkitTextSecurity === 'disc') {
+                inputSandi.style.webkitTextSecurity = 'none';
+                ikonTutup.classList.add('hidden');
+                ikonTutup.classList.remove('block');
+                ikonBuka.classList.remove('hidden');
+                ikonBuka.classList.add('block');
+            } else {
+                inputSandi.style.webkitTextSecurity = 'disc';
+                ikonBuka.classList.add('hidden');
+                ikonBuka.classList.remove('block');
+                ikonTutup.classList.remove('hidden');
+                ikonTutup.classList.add('block');
+            }
+        }
+
+        // =========================================================
+        // LOGIN REAL-TIME (SISTEM 2 HAK SUARA: PUTRA & PUTRI)
+        // =========================================================
+        function prosesLogin() {
+            const user = document.getElementById('usernameInput').value.trim();
+            const pass = document.getElementById('passwordInput').value;
+            const userKey = user.toLowerCase();
+
+            if (user === "" || pass === "") {
+                alert("Harap masukkan Username dan Password!");
+                return;
+            }
+
+            // Cek tinta digital (hanya blokir jika sudah memilih KEDUANYA)
+            if (userKey !== "admin" && userKey !== "panitia") {
+                if (localStorage.getItem('voted_putra_' + userKey) === 'true' &&
+                    localStorage.getItem('voted_putri_' + userKey) === 'true') {
+                    alert("❌ MAAF! Santri atas nama " + user + " sudah menggunakan kedua hak suaranya.");
+                    return;
+                }
+            }
+
+            // Pintu masuk Panitia
+            if (userKey === "panitia" && pass === "panitia123") {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('panitia-section').classList.remove('hidden');
+                refreshDaftarPanitia();
+                return;
+            }
+
+            // Pintu masuk Admin
+            if (userKey === "admin" && pass === "admin123") {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('admin-section').classList.remove('hidden');
+                refreshDataAdmin();
+                return;
+            }
+
+            const btnLogin = document.querySelector('button[onclick="prosesLogin()"]');
+            const originalText = btnLogin.innerText;
+            btnLogin.innerText = "Memeriksa Daftar Hadir...";
+            btnLogin.disabled = true;
+
+            const urlPutra = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hadir Putra`;
+            const urlPutri = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hadir Putri`;
+
+            Promise.all([
+                fetch(urlPutra).then(res => res.text()),
+                fetch(urlPutri).then(res => res.text())
+            ])
+            .then(([textPutra, textPutri]) => {
+                const dataPutra = JSON.parse(textPutra.substring(textPutra.indexOf('{'), textPutra.lastIndexOf('}') + 1));
+                const dataPutri = JSON.parse(textPutri.substring(textPutri.indexOf('{'), textPutri.lastIndexOf('}') + 1));
+
+                let loginSukses = false;
+
+                // 1. Cek di Daftar Hadir Putra
+                if (dataPutra.table.rows) {
+                    for (let row of dataPutra.table.rows) {
+                        if (row.c && row.c[0] && row.c[1]) {
+                            if (String(row.c[0].v).trim().toLowerCase() === userKey && String(row.c[1].v) === String(pass)) {
+                                loginSukses = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // 2. Cek di Daftar Hadir Putri
+                if (!loginSukses && dataPutri.table.rows) {
+                    for (let row of dataPutri.table.rows) {
+                        if (row.c && row.c[0] && row.c[1]) {
+                            if (String(row.c[0].v).trim().toLowerCase() === userKey && String(row.c[1].v) === String(pass)) {
+                                loginSukses = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (loginSukses) {
+                    document.getElementById('login-section').classList.add('hidden');
+                    sessionStorage.setItem('currentUser', userKey);
+
+                    // Jika sebelumnya sudah pilih Putra tapi halaman sempat ter-refresh, langsung lanjut ke Bilik Putri
+                    if (localStorage.getItem('voted_putra_' + userKey) === 'true') {
+                        document.getElementById('voting-putri-section').classList.remove('hidden');
+                    } else {
+                        // Semua pemilih (Putra maupun Putri) mulai dari Tahap 1: Bilik Putra
+                        document.getElementById('voting-putra-section').classList.remove('hidden');
+                    }
+                    window.scrollTo(0, 0);
+                } else {
+                    alert("Username atau Password salah, atau Anda belum terdaftar oleh Panitia!");
+                    btnLogin.innerText = originalText;
+                    btnLogin.disabled = false;
+                }
+            })
+            .catch(() => {
+                alert("Gagal terhubung ke database. Pastikan internet lancar.");
+                btnLogin.innerText = originalText;
+                btnLogin.disabled = false;
+            });
+        }
+
+        // =========================================================
+        // PROSES VOTING 2 TAHAP (PUTRA -> PUTRI)
+        // =========================================================
+        function prosesVote(namaKandidat, kategori) {
+            kandidatSementara = namaKandidat;
+            kategoriSementara = kategori;
+            document.getElementById('nama-kandidat-terpilih').innerText = namaKandidat;
+            document.getElementById('modal-konfirmasi').classList.remove('hidden');
+        }
+
+        function batalVote() {
+            kandidatSementara = "";
+            kategoriSementara = "";
+            document.getElementById('modal-konfirmasi').classList.add('hidden');
+        }
+
+        function kirimVote() {
+            document.getElementById('text-yakin').innerText = "Mengirim...";
+            document.getElementById('loading-spinner').classList.remove('hidden');
+            document.getElementById('btn-batal').disabled = true;
+            document.getElementById('btn-yakin').disabled = true;
+
+            const formData = new URLSearchParams();
+            formData.append('kategori', kategoriSementara);
+            formData.append('kandidat', kandidatSementara);
+
+            fetch(URL_DATABASE, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            }).then(() => {
+                const aktif = sessionStorage.getItem('currentUser');
+
+                if (kategoriSementara === 'Putra') {
+                    // Tandai suara Putra sudah masuk
+                    if (aktif) localStorage.setItem('voted_putra_' + aktif, 'true');
+
+                    // Reset tombol & tutup modal konfirmasi
+                    document.getElementById('text-yakin').innerText = "Yakin";
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                    document.getElementById('btn-batal').disabled = false;
+                    document.getElementById('btn-yakin').disabled = false;
+                    document.getElementById('modal-konfirmasi').classList.add('hidden');
+
+                    // Pindah otomatis ke Tahap 2: Bilik Putri
+                    alert('Suara Calon Ketua Putra tersimpan! Sekarang silakan pilih Calon Ketua Putri.');
+                    document.getElementById('voting-putra-section').classList.add('hidden');
+                    document.getElementById('voting-putri-section').classList.remove('hidden');
+                    window.scrollTo(0, 0);
+                } else {
+                    // Tandai suara Putri sudah masuk -> selesai
+                    if (aktif) localStorage.setItem('voted_putri_' + aktif, 'true');
+                    alert('Terima kasih! Kedua suara Anda (Putra & Putri) telah berhasil disimpan.');
+                    window.location.reload();
+                }
+            }).catch(() => {
+                alert('Terjadi kesalahan koneksi. Coba lagi.');
+                window.location.reload();
+            });
+        }
+
+        // =========================================================
+        // LIVE GRAFIK ADMIN
+        // =========================================================
+        function refreshDataAdmin() {
+            const btn = document.getElementById('text-refresh-admin');
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+
+            fetch(url)
+                .then(res => res.text())
+                .then(text => {
+                    const data = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1));
+
+                    let putra1 = 0, putra2 = 0, putra3 = 0;
+                    let putri1 = 0, putri2 = 0, putri3 = 0;
+
+                    if (data.table.rows && data.table.rows.length > 0) {
+                        data.table.rows.forEach(row => {
+                            if (row.c && row.c[2] && row.c[2].v) {
+                                const kandidat = String(row.c[2].v).trim();
+
+                                // PENGHITUNGAN PUTRA
+                                if (kandidat === '01. Hafidz Hasandi Albasthomi') putra1++;
+                                else if (kandidat === '02. M. Azka Afkharul Ishka') putra2++;
+                                else if (kandidat === '03. Khaffiyan Rozaq Aghna') putra3++;
+
+                                // PENGHITUNGAN PUTRI
+                                else if (kandidat === '01. Nayla Fitri Amalia') putri1++;
+                                else if (kandidat === '02. Azzaria Neysa Lathifa') putri2++;
+                                else if (kandidat === '03. Aalya Himmah El-Milla') putri3++;
+                            }
+                        });
+                    }
+
+                    const maxPutra = Math.max(putra1, putra2, putra3);
+                    const maxPutri = Math.max(putri1, putri2, putri3);
+                    const calcWidth = (suara, max) => max > 0 ? (suara / max) * 100 : 0;
+
+                    document.getElementById('suara-putra-1').innerText = putra1 + " Suara";
+                    document.getElementById('suara-putra-2').innerText = putra2 + " Suara";
+                    document.getElementById('suara-putra-3').innerText = putra3 + " Suara";
+                    document.getElementById('suara-putri-1').innerText = putri1 + " Suara";
+                    document.getElementById('suara-putri-2').innerText = putri2 + " Suara";
+                    document.getElementById('suara-putri-3').innerText = putri3 + " Suara";
+
+                    document.getElementById('bar-putra-1').style.width = calcWidth(putra1, maxPutra) + "%";
+                    document.getElementById('bar-putra-2').style.width = calcWidth(putra2, maxPutra) + "%";
+                    document.getElementById('bar-putra-3').style.width = calcWidth(putra3, maxPutra) + "%";
+                    document.getElementById('bar-putri-1').style.width = calcWidth(putri1, maxPutri) + "%";
+                    document.getElementById('bar-putri-2').style.width = calcWidth(putri2, maxPutri) + "%";
+                    document.getElementById('bar-putri-3').style.width = calcWidth(putri3, maxPutri) + "%";
+
+                    btn.innerText = "Refresh Data";
+                })
+                .catch(err => {
+                    console.error("Gagal mengambil data admin:", err);
+                    btn.innerText = "Koneksi Lemah, Mencoba Lagi...";
+                });
+        }
+
+        setInterval(() => {
+            if (!document.getElementById('admin-section').classList.contains('hidden')) {
+                refreshDataAdmin();
+            }
+        }, 5000);
+
+        // =========================================================
+        // PANEL PANITIA
+        // =========================================================
+        function daftarkanPemilih() {
+            const bilik = document.getElementById('panitia-bilik').value;
+            const userBaru = document.getElementById('panitia-user').value.trim();
+            const passBaru = document.getElementById('panitia-pass').value;
+            const btnDaftar = document.getElementById('btn-daftar');
+
+            if (userBaru === "" || passBaru === "") {
+                alert("Username dan Password tidak boleh kosong!");
+                return;
+            }
+
+            btnDaftar.innerText = "Mengirim...";
+            btnDaftar.disabled = true;
+
+            const formData = new URLSearchParams();
+            formData.append('tipe', 'pendaftaran');
+            formData.append('bilik', bilik);
+            formData.append('username', userBaru);
+            formData.append('password', passBaru);
+
+            fetch(URL_DATABASE, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            }).then(() => {
+                alert(`BERHASIL: ${userBaru} telah didaftarkan ke ${bilik}!`);
+                document.getElementById('panitia-user').value = "";
+                document.getElementById('panitia-pass').value = "";
+                btnDaftar.innerText = "Tambahkan Pemilih";
+                btnDaftar.disabled = false;
+                refreshDaftarPanitia();
+            }).catch(() => {
+                alert('Gagal mengirim data. Cek koneksi.');
+                btnDaftar.innerText = "Tambahkan Pemilih";
+                btnDaftar.disabled = false;
+            });
+        }
+
+        function refreshDaftarPanitia() {
+            const listPutra = document.getElementById('list-hadir-putra');
+            const listPutri = document.getElementById('list-hadir-putri');
+
+            listPutra.innerHTML = '<li class="italic text-gray-400 text-center py-4">🔄 Menarik data...</li>';
+            listPutri.innerHTML = '<li class="italic text-gray-400 text-center py-4">🔄 Menarik data...</li>';
+
+            const urlPutra = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hadir Putra`;
+            const urlPutri = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Hadir Putri`;
+
+            Promise.all([
+                fetch(urlPutra).then(res => res.text()),
+                fetch(urlPutri).then(res => res.text())
+            ])
+            .then(([textPutra, textPutri]) => {
+                const dataPutra = JSON.parse(textPutra.substring(textPutra.indexOf('{'), textPutra.lastIndexOf('}') + 1));
+                const dataPutri = JSON.parse(textPutri.substring(textPutri.indexOf('{'), textPutri.lastIndexOf('}') + 1));
+
+                listPutra.innerHTML = '';
+                listPutri.innerHTML = '';
+
+                if (dataPutra.table.rows && dataPutra.table.rows.length > 0) {
+                    dataPutra.table.rows.forEach(row => {
+                        if (row.c && row.c[0] && row.c[1]) {
+                            const user = row.c[0].v;
+                            const pass = row.c[1].v;
+                            listPutra.innerHTML += `<li class="flex justify-between bg-[#eef9e8] px-3 py-2 rounded-lg border border-green-200">
+                                <span>👤 <span class="font-medium">${user}</span></span>
+                                <span class="text-xs bg-[#257415] text-white px-2 py-1 rounded">🔑 ${pass}</span>
+                            </li>`;
+                        }
+                    });
+                } else {
+                    listPutra.innerHTML = '<li class="text-gray-500 italic text-center">Belum ada pendaftar</li>';
+                }
+
+                if (dataPutri.table.rows && dataPutri.table.rows.length > 0) {
+                    dataPutri.table.rows.forEach(row => {
+                        if (row.c && row.c[0] && row.c[1]) {
+                            const user = row.c[0].v;
+                            const pass = row.c[1].v;
+                            listPutri.innerHTML += `<li class="flex justify-between bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-200">
+                                <span>👤 <span class="font-medium">${user}</span></span>
+                                <span class="text-xs bg-emerald-700 text-white px-2 py-1 rounded">🔑 ${pass}</span>
+                            </li>`;
+                        }
+                    });
+                } else {
+                    listPutri.innerHTML = '<li class="text-gray-500 italic text-center">Belum ada pendaftar</li>';
+                }
+            })
+            .catch(() => {
+                listPutra.innerHTML = '<li class="text-red-500 text-center">Gagal memuat data</li>';
+                listPutri.innerHTML = '<li class="text-red-500 text-center">Gagal memuat data</li>';
+            });
+        }
+    </script>
+</body>
+</html>
