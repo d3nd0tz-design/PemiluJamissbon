@@ -16,6 +16,15 @@
         /* Kustomisasi scrollbar untuk modal profil */
         .modal-scroll::-webkit-scrollbar { width: 6px; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #86c973; border-radius: 10px; }
+
+        /* Animasi pop-up notifikasi kustom */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.88) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-pop-in {
+            animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     </style>
 </head>
 <body class="min-h-screen text-gray-800 selection:bg-lime-300 selection:text-green-950">
@@ -32,7 +41,7 @@
             <h1 class="text-5xl font-extrabold mb-3 tracking-wide drop-shadow-sm">Hello!</h1>
             <h2 class="text-xl md:text-2xl font-semibold text-lime-100 mb-4">Pemilihan Calon Ketua Hisbu-Jamissbon</h2>
             <p class="text-green-50/90 text-sm md:text-base leading-relaxed max-w-md">
-                Gunakan 2 hak suara Anda (Calon Ketua Putra &amp; Calon Ketua Putri) untuk menentukan pemimpin terbaik Hisbu-Jamissbon Periode 2026 - 2027.
+                Gunakan hak suara Anda untuk menentukan pemimpin terbaik Hisbu-Jamissbon Periode 2026 - 2027.
             </p>
         </div>
 
@@ -433,7 +442,7 @@
 
     <!-- MODAL PROFIL KANDIDAT -->
     <div id="modal-profil" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
+        <div class="bg-white rounded-[2rem] w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl relative overflow-hidden animate-pop-in">
             <div class="bg-[#eef9e8] px-8 py-4 flex justify-between items-center border-b border-green-200">
                 <h3 class="text-xl font-bold text-[#1a540e]">Profil Kandidat</h3>
                 <button onclick="tutupProfil()" class="text-gray-500 hover:text-red-500 transition text-3xl leading-none">&times;</button>
@@ -473,7 +482,7 @@
 
     <!-- MODAL KONFIRMASI VOTING -->
     <div id="modal-konfirmasi" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-[#257415]">
+        <div class="bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-[#257415] animate-pop-in">
             <div class="w-16 h-16 bg-[#eef9e8] text-[#257415] rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🗳️</div>
             <h3 class="text-2xl font-bold text-gray-900 mb-2">Konfirmasi Pilihan</h3>
             <p class="text-gray-600 mb-6 text-sm">
@@ -490,11 +499,93 @@
         </div>
     </div>
 
+    <!-- MODAL NOTIFIKASI KUSTOM (PENGGANTI POP-UP ALERT BAWAAN BROWSER) -->
+    <div id="modal-notifikasi" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div id="notif-card" class="bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-[#257415] animate-pop-in relative overflow-hidden">
+            <!-- Lingkaran Ikon -->
+            <div id="notif-icon-wrap" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner bg-[#eef9e8] text-[#257415]">
+                <svg id="notif-icon-svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-10 h-10">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+            </div>
+            <!-- Judul & Pesan -->
+            <h3 id="notif-judul" class="text-2xl font-bold text-gray-900 mb-2">Berhasil!</h3>
+            <p id="notif-pesan" class="text-gray-600 text-sm leading-relaxed mb-7">Pesan notifikasi akan tampil di sini.</p>
+            <!-- Tombol Tutup -->
+            <button id="notif-btn" onclick="tutupNotif()" class="w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-3.5 px-6 rounded-full shadow-lg transition transform active:scale-95">
+                Oke, Mengerti
+            </button>
+        </div>
+    </div>
+
     <!-- SCRIPT LOGIKA -->
     <script>
         // Ganti URL & SHEET_ID ini jika kamu membuat Spreadsheet & Apps Script baru untuk Hisbu-Jamissbon
         const URL_DATABASE = "https://script.google.com/macros/s/AKfycby6BbbsLEFvYQAO6YdPdtl2jWS5dcWeEHHgtjBYOPVhRaxuPdA-mqpW26Fx0vYJXXMfYA/exec";
         const SHEET_ID = "1gR_p5dgEY28Y54wvDHqawCybhXx2iUe82ZDc-mPbBkk";
+
+        // =========================================================
+        // SISTEM POP-UP NOTIFIKASI KUSTOM (PENGGANTI alert())
+        // =========================================================
+        let callbackSetelahNotif = null;
+
+        function tampilkanNotif(judul, pesan, tipe = 'success', onClose = null) {
+            const modal = document.getElementById('modal-notifikasi');
+            const card = document.getElementById('notif-card');
+            const iconWrap = document.getElementById('notif-icon-wrap');
+            const iconSvg = document.getElementById('notif-icon-svg');
+            const elJudul = document.getElementById('notif-judul');
+            const elPesan = document.getElementById('notif-pesan');
+            const btn = document.getElementById('notif-btn');
+
+            elJudul.innerText = judul;
+            elPesan.innerHTML = pesan;
+            callbackSetelahNotif = onClose;
+
+            // Reset animasi agar selalu mulus tiap kali muncul
+            card.classList.remove('animate-pop-in');
+            void card.offsetWidth;
+            card.classList.add('animate-pop-in');
+
+            if (tipe === 'error') {
+                card.className = "bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-red-500 animate-pop-in relative overflow-hidden";
+                iconWrap.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner bg-red-50 text-red-500";
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />';
+                btn.className = "w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 px-6 rounded-full shadow-lg transition transform active:scale-95";
+                btn.innerText = "Tutup";
+            } else if (tipe === 'warning') {
+                card.className = "bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-amber-500 animate-pop-in relative overflow-hidden";
+                iconWrap.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner bg-amber-50 text-amber-500";
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />';
+                btn.className = "w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3.5 px-6 rounded-full shadow-lg transition transform active:scale-95";
+                btn.innerText = "Oke, Perbaiki";
+            } else {
+                card.className = "bg-white rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border-t-8 border-[#257415] animate-pop-in relative overflow-hidden";
+                iconWrap.className = "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner bg-[#eef9e8] text-[#257415]";
+                iconSvg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />';
+                btn.className = "w-full bg-[#257415] hover:bg-[#1b590f] text-white font-bold py-3.5 px-6 rounded-full shadow-lg transition transform active:scale-95";
+                btn.innerText = "Oke, Lanjut";
+            }
+
+            modal.classList.remove('hidden');
+            btn.focus();
+        }
+
+        function tutupNotif() {
+            document.getElementById('modal-notifikasi').classList.add('hidden');
+            if (typeof callbackSetelahNotif === 'function') {
+                const fn = callbackSetelahNotif;
+                callbackSetelahNotif = null;
+                fn();
+            }
+        }
+
+        // Bisa tutup notifikasi dengan tombol Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('modal-notifikasi').classList.contains('hidden')) {
+                tutupNotif();
+            }
+        });
 
         // =========================================================
         // DATA VISI MISI KANDIDAT (SESUAI POSTINGAN IG HISBU-JAMISSBON)
@@ -505,10 +596,11 @@
                 kategori: "Kandidat 01 - Calon Ketua Putra",
                 ttl: "Tuban, ...",
                 foto: "alb.jpg",
-                visi: "Tuliskan visi Hafidz Hasandi Albasthomi di sini.",
+                visi: "Mewujudkan organisasi yang berintegritas, berdaya, dan berkontribusi nyata bagi anggotanya serta lingkungan sekitar",
                 misi: [
-                    "Misi pertama Hafidz Hasandi Albasthomi.",
-                    "Misi kedua Hafidz Hasandi Albasthomi."
+                    "Membangun solidaritas dan komunikasi yang efektif antar anggota",
+                    "Mengembangkan potensi dan kompetensi anggota",
+                    "Menciptakan budaya organisasi yang inovatif, inklusif, dan berorientasi pada hasil"
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -520,10 +612,11 @@
                 kategori: "Kandidat 02 - Calon Ketua Putra",
                 ttl: "Tuban, ...",
                 foto: "azka.jpg",
-                visi: "Tuliskan visi M. Azka Afkharul Ishka di sini.",
+                visi: "Menciptakan organisasi yang maju, modern dan demokratis.",
                 misi: [
-                    "Misi pertama M. Azka Afkharul Ishka.",
-                    "Misi kedua M. Azka Afkharul Ishka."
+                    "Menyatukan dan memperkuat interaksi sosial antar anggota",
+                    "Menuntut para anggota untuk merundingkan dan memecahkan masalah bersama-sama.",
+                    "Mengedepankan logika dan berpikir kritis dalam mengambil keputusan dan mencari solusi."
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -535,10 +628,12 @@
                 kategori: "Kandidat 03 - Calon Ketua Putra",
                 ttl: "Tuban, ...",
                 foto: "kh.jpg",
-                visi: "Tuliskan visi Khaffiyan Rozaq Aghna di sini.",
+                visi: "Menjadikan HISBU-Jamissbon Sebagai wadah pengabdian santri kepada masyarakat dan mewujudkan organisasi yang kreatif, inovatif dan berkembang sesuai perkembangan zaman",
                 misi: [
-                    "Misi pertama Khaffiyan Rozaq Aghna.",
-                    "Misi kedua Khaffiyan Rozaq Aghna."
+                    "Menghidupkan karakter santri",
+                    "Mengembangkan karakter santri",
+                    "Mempererat solidaritas antar anggota",
+                    "menambah jumlah anggota"
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -550,10 +645,12 @@
                 kategori: "Kandidat 01 - Calon Ketua Putri",
                 ttl: "Tuban, ...",
                 foto: "nayela.jpg",
-                visi: "Tuliskan visi Nayla Fitri Amalia di sini.",
+                visi: "mewujudkan organisasi daerah hisbu jamissbon yang inovatif, berdaya saing, berintegritas tinggi sebagai rumah berproses yang berdampak bagi anggota dan daerah.",
                 misi: [
-                    "Misi pertama Nayla Fitri Amalia.",
-                    "Misi kedua Nayla Fitri Amalia."
+                    "1. membangun ikatan kekeluargaan yang inklusif, hangat, dan antar anggota serta alumni jamissbon,",
+                    "2. menyediakan wadah pengembangan potensi akademis, minat bakat, dan kepemimpinan bagi seluruh anggota jamissbon.",
+                    "3. komitmen untuk mengelola organisasi secara professional, jujur, terukur dan memanfaatkan teknologi modern agar lebih efisien.",
+                    "4. melakukan reaktivasi terhadap program kerja yang tidak terlaksana pada periode lalu.",
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -565,10 +662,11 @@
                 kategori: "Kandidat 02 - Calon Ketua Putri",
                 ttl: "Tuban, ...",
                 foto: "no bg.jpg",
-                visi: "Tuliskan visi Azzaria Neysa Lathifa di sini.",
+                visi: "Mewujudkan organisasi HISBU-JAMISSBON yang progresif, solid, dan berintegritas sebagai wadah pemersatu, pengembangan potensi, serta penguatan rasa kekeluargaan dalam menciptakan generasi yang aktif, berkarakter, dan bertanggung jawab.",
                 misi: [
-                    "Misi pertama Azzaria Neysa Lathifa.",
-                    "Misi kedua Azzaria Neysa Lathifa."
+                    "Membangun hubungan yang harmonis antar anggota dengan mengedepankan rasa saling menghargai, kepedulian, dan kebersamaan.",
+                    "Mendorong pengembangan potensi, kreativitas, dan kemampuan anggota melalui kegiatan yang edukatif dan produktif.",
+                    "Menjadikan organisasi sebagai wadah aspirasi."
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -580,10 +678,11 @@
                 kategori: "Kandidat 03 - Calon Ketua Putri",
                 ttl: "Tuban, ...",
                 foto: "al.jpg",
-                visi: "Tuliskan visi Aalya Himmah El-Milla di sini.",
+                visi: "menjadikan organisasi daerah hisbu jamissbon yang berkarakter islami, berintegritas, dan berdaya saing yang mampu mempererat ukhuwah antarsantri Bahrul Ulum serta berkontribusi nyata bagi kemajuan santri",
                 misi: [
-                    "Misi pertama Aalya Himmah El-Milla.",
-                    "Misi kedua Aalya Himmah El-Milla."
+                    "Memperkuat ukhuwah dan solidaritas antar anggota",
+                    "Membangun karakter santri yang berakhlakul karimah, berwawasan luas, dan berkemampuan leadership",
+                    "memperluas anggota serta membangun semanggat dalam menjunjung tinggi orda hisbu jamissbon"
                 ],
                 pengalaman: [
                     "Pengalaman organisasi 1",
@@ -663,7 +762,7 @@
             const userKey = user.toLowerCase();
 
             if (user === "" || pass === "") {
-                alert("Harap masukkan Username dan Password!");
+                tampilkanNotif("Data Belum Lengkap", "Harap masukkan Username dan Password Anda terlebih dahulu.", "warning");
                 return;
             }
 
@@ -671,7 +770,11 @@
             if (userKey !== "admin" && userKey !== "panitia") {
                 if (localStorage.getItem('voted_putra_' + userKey) === 'true' &&
                     localStorage.getItem('voted_putri_' + userKey) === 'true') {
-                    alert("❌ MAAF! Santri atas nama " + user + " sudah menggunakan kedua hak suaranya.");
+                    tampilkanNotif(
+                        "Sudah Memilih",
+                        `Maaf, santri atas nama <b>${user}</b> sudah menggunakan kedua hak suaranya.`,
+                        "error"
+                    );
                     return;
                 }
             }
@@ -747,13 +850,21 @@
                     }
                     window.scrollTo(0, 0);
                 } else {
-                    alert("Username atau Password salah, atau Anda belum terdaftar oleh Panitia!");
+                    tampilkanNotif(
+                        "Login Gagal",
+                        "Username atau Password salah, atau Anda belum didaftarkan oleh Panitia.",
+                        "error"
+                    );
                     btnLogin.innerText = originalText;
                     btnLogin.disabled = false;
                 }
             })
             .catch(() => {
-                alert("Gagal terhubung ke database. Pastikan internet lancar.");
+                tampilkanNotif(
+                    "Koneksi Bermasalah",
+                    "Gagal terhubung ke database. Pastikan koneksi internet Anda lancar lalu coba lagi.",
+                    "error"
+                );
                 btnLogin.innerText = originalText;
                 btnLogin.disabled = false;
             });
@@ -803,20 +914,40 @@
                     document.getElementById('btn-yakin').disabled = false;
                     document.getElementById('modal-konfirmasi').classList.add('hidden');
 
-                    // Pindah otomatis ke Tahap 2: Bilik Putri
-                    alert('Suara Calon Ketua Putra tersimpan! Sekarang silakan pilih Calon Ketua Putri.');
-                    document.getElementById('voting-putra-section').classList.add('hidden');
-                    document.getElementById('voting-putri-section').classList.remove('hidden');
-                    window.scrollTo(0, 0);
+                    // Tampilkan pop-up keren lalu lanjut otomatis ke Tahap 2: Bilik Putri
+                    tampilkanNotif(
+                        "Suara Putra Tersimpan!",
+                        "Pilihan Calon Ketua Putra berhasil dicatat. Sekarang silakan lanjut memilih <b>Calon Ketua Putri</b>.",
+                        "success",
+                        () => {
+                            document.getElementById('voting-putra-section').classList.add('hidden');
+                            document.getElementById('voting-putri-section').classList.remove('hidden');
+                            window.scrollTo(0, 0);
+                        }
+                    );
                 } else {
                     // Tandai suara Putri sudah masuk -> selesai
                     if (aktif) localStorage.setItem('voted_putri_' + aktif, 'true');
-                    alert('Terima kasih! Kedua suara Anda (Putra & Putri) telah berhasil disimpan.');
-                    window.location.reload();
+                    document.getElementById('modal-konfirmasi').classList.add('hidden');
+                    tampilkanNotif(
+                        "Terima Kasih!",
+                        "Kedua suara Anda (<b>Putra &amp; Putri</b>) telah berhasil disimpan ke dalam sistem.",
+                        "success",
+                        () => {
+                            window.location.reload();
+                        }
+                    );
                 }
             }).catch(() => {
-                alert('Terjadi kesalahan koneksi. Coba lagi.');
-                window.location.reload();
+                document.getElementById('modal-konfirmasi').classList.add('hidden');
+                tampilkanNotif(
+                    "Gagal Mengirim",
+                    "Terjadi kesalahan koneksi saat menyimpan suara. Silakan coba lagi.",
+                    "error",
+                    () => {
+                        window.location.reload();
+                    }
+                );
             });
         }
 
@@ -895,7 +1026,7 @@
             const btnDaftar = document.getElementById('btn-daftar');
 
             if (userBaru === "" || passBaru === "") {
-                alert("Username dan Password tidak boleh kosong!");
+                tampilkanNotif("Data Kosong", "Username dan Password pemilih baru tidak boleh kosong!", "warning");
                 return;
             }
 
@@ -913,16 +1044,24 @@
                 body: formData,
                 mode: 'no-cors'
             }).then(() => {
-                alert(`BERHASIL: ${userBaru} telah didaftarkan ke ${bilik}!`);
                 document.getElementById('panitia-user').value = "";
                 document.getElementById('panitia-pass').value = "";
                 btnDaftar.innerText = "Tambahkan Pemilih";
                 btnDaftar.disabled = false;
                 refreshDaftarPanitia();
+
+                tampilkanNotif(
+                    "Pendaftaran Berhasil!",
+                    `Santri atas nama <b>${userBaru}</b> telah ditambahkan ke daftar <b>${bilik}</b>.`,
+                    "success",
+                    () => {
+                        document.getElementById('panitia-user').focus();
+                    }
+                );
             }).catch(() => {
-                alert('Gagal mengirim data. Cek koneksi.');
                 btnDaftar.innerText = "Tambahkan Pemilih";
                 btnDaftar.disabled = false;
+                tampilkanNotif("Gagal Mengirim", "Gagal menyimpan data ke database. Cek koneksi internet Anda.", "error");
             });
         }
 
